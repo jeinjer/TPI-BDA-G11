@@ -10,9 +10,9 @@ import javax.money.convert.MonetaryConversions;
 
 @Service
 public class MonedaService {
-    public double calcularConversion(String parametro) {
+    public double calcularConversion(String parametro, double ammount) {
         CurrencyUnit ars = Monetary.getCurrency("ARS");
-        MonetaryAmount montoEnPesos = Monetary.getDefaultAmountFactory().setCurrency(ars).setNumber(1000).create();
+        MonetaryAmount montoEnPesos = Monetary.getDefaultAmountFactory().setCurrency(ars).setNumber(ammount).create();
 
         // Conversión a otra moneda
         CurrencyUnit moneda = Monetary.getCurrency(parametro);

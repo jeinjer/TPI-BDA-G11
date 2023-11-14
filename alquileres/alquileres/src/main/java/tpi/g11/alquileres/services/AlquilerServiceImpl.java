@@ -1,10 +1,13 @@
 package tpi.g11.alquileres.services;
 
 import tpi.g11.alquileres.models.Alquiler;
+import tpi.g11.alquileres.models.Tarifa;
 import tpi.g11.alquileres.repositorios.AlquilerRepository;
 import org.springframework.stereotype.Service;
+import tpi.g11.estaciones.models.Estacion;
 import tpi.g11.estaciones.services.EstacionServiceImpl;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -57,69 +60,70 @@ public class AlquilerServiceImpl implements AlquilerService{
             return null;
         }
     }
-    /*
-    // Metodo sin probar
     public void iniciarAlquiler(Long estacionId){
         try{
-        EstacionDTO estacionDto = estacionService.findById(estacionId);
-        if (estacionDto != null){
-            AlquilerDTO alquilerDto = new AlquilerDTO();
-            alquilerDto.setEstacionRetiro(estacionDto);  // Estacion pasada como argumento
-            save(alquilerDto);  // Finalmente la guardamos
+        Optional<Estacion> estacion = estacionService.findById(estacionId);
+        if (estacion != null){
+            Alquiler alquiler = new Alquiler();
+            alquiler.setEstacionRetiro(estacion.get());
+            save(alquiler);
             }
         } catch (RuntimeException ex){
             throw new IllegalArgumentException("Error con la estación o el alquiler");
         }
     }
 
-    public double calcularCosto(AlquilerDTO alquilerDto, TarifaDTO tarifaDto){
-        Duration duracion = Duration.between(alquilerDto.getFechaHoraRetiro(), alquilerDto.getFechaHoraDevolucion());
+    public double calcularCosto(Alquiler alquiler, Tarifa tarifa){
+        Duration duracion = Duration.between(alquiler.getFechaHoraRetiro(), alquiler.getFechaHoraDevolucion());
         long minutos = duracion.toMinutes();
         long horas = duracion.toHours();
         double costo;
 
         if (horas == 0){
-            costo = tarifaDto.getMontoMinutoFraccion() * minutos;
+            costo = tarifa.getMontoMinutoFraccion() * minutos;
         } else {
             if (minutos > 30) {
-                costo = tarifaDto.getMontoHora() * (horas + 1);
+                costo = tarifa.getMontoHora() * (horas + 1);
             } else {
-                costo = tarifaDto.getMontoHora() * horas;
+                costo = tarifa.getMontoHora() * horas;
             }
         }
 
         double distancia = estacionService.calcularDistancia(
-                alquilerDto.getEstacionRetiro().getLatitud(),
-                alquilerDto.getEstacionDevolucion().getLatitud(),
-                alquilerDto.getEstacionRetiro().getLongitud(),
-                alquilerDto.getEstacionDevolucion().getLongitud());
+                alquiler.getEstacionRetiro().getLatitud(),
+                alquiler.getEstacionDevolucion().getLatitud(),
+                alquiler.getEstacionRetiro().getLongitud(),
+                alquiler.getEstacionDevolucion().getLongitud());
 
-        costo = costo + (distancia * tarifaDto.getMontoKm());
+        costo = costo + (distancia * tarifa.getMontoKm());
 
         return costo;
     }
 
-    public AlquilerDTO finalizarAlquiler(Long alquilerId, String moneda) {
-        AlquilerDTO alquilerFinalizado = null;
+    @Override
+    public Optional<Alquiler> finalizarAlquiler(Long alquilerId) {
         try {
-            AlquilerDTO alquiler = this.findById(alquilerId);
-            if (alquiler != null) {
-                alquilerFinalizado = alquiler;
-                alquilerFinalizado.setMonto(calcularCosto(alquiler, tarifaService.findById(1L)));
-                alquilerFinalizado.setEstado(2);
+            Optional<Alquiler> alquiler = this.findById(alquilerId);
+            if (alquiler.isPresent()) {
+                Optional<Tarifa> tarifa = tarifaService.findById(alquiler.get().getTarifa().getTarifaId());
+                if (tarifa.isPresent()) {
+                    Alquiler alquilerFinalizado = alquiler.get();
+                    alquilerFinalizado.setMonto(calcularCosto(alquilerFinalizado, tarifa.get()));
+                    alquilerFinalizado.setEstado(2);
+                    /*
+                    if (moneda != null) {
+                        alquilerFinalizado.setMonto(monedaService.calcularConversion(moneda, alquilerFinalizado.getMonto()));
+                    }
+                    */
+                    return Optional.of(alquilerFinalizado);
+                }
             }
-            return alquilerFinalizado;
         } catch (NoSuchElementException e) {
-            // agregar excepcion
+            return null;
         }
-        return alquilerFinalizado;
-        /*
-        if (moneda != null){
-            alquilerFinalizado.setMonto(monedaService.calcularConversion(moneda));
-        }
-        return alquilerFinalizado;
+        return Optional.empty();
     }
-    */
+
     public List<Alquiler> listadoFiltrado(){
         List<Alquiler> alquileresFiltrados = null;
         try{
@@ -128,8 +132,8 @@ public class AlquilerServiceImpl implements AlquilerService{
             alquileresFiltrados = alquileres.stream().filter(alquiler -> alquiler.getEstado() == 1).toList();
         }
         } catch (NoSuchElementException e){
-            // agregar excepcion
         }
         return alquileresFiltrados;
     }
 }
+

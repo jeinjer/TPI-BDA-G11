@@ -34,6 +34,17 @@ public class AlquilerController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }}
 
+    @GetMapping("/finalizar-alquiler/{id}")
+    public ResponseEntity<Optional<Alquiler>> finalizarAlquiler(@PathVariable Long id) {
+        try{
+            Optional<Alquiler> alquileres = alquilerService.finalizarAlquiler(id);
+            if (alquileres != null) return ResponseEntity.ok(alquileres);
+            else return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (IllegalArgumentException ex){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();}}
+
     @GetMapping("/filtrado-por-estado-activo")
     public ResponseEntity<List<Alquiler>> getAlquileresFiltradosPorEstadoActivo () {
         try{

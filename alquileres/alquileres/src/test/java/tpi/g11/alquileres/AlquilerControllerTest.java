@@ -33,7 +33,7 @@ public class AlquilerControllerTest {
         Mockito.when(alquilerService.findAll())
                 .thenReturn(alquileres);
 
-        HttpUriRequest request = new HttpGet("http://localhost:8080/api/alquileres/");
+        HttpUriRequest request = new HttpGet("http://localhost:8083/api/alquileres/");
 
         // Act
         CloseableHttpResponse response = HttpClientBuilder.create().build().execute(request);
@@ -47,7 +47,7 @@ public class AlquilerControllerTest {
         Mockito.when(alquilerService.findAll())
                 .thenThrow(NoSuchElementException.class);
 
-        HttpUriRequest request = new HttpGet("http://localhost:8080/api/alquileres/");
+        HttpUriRequest request = new HttpGet("http://localhost:8083/api/alquileres/");
 
         // Act
         CloseableHttpResponse response = HttpClientBuilder.create().build().execute(request);
@@ -63,7 +63,7 @@ public class AlquilerControllerTest {
         Mockito.when(alquilerService.listadoFiltrado())
                 .thenReturn(alquileres);
 
-        HttpUriRequest request = new HttpGet("http://localhost:8080/api/alquileres/filtrado-por-estado-activo");
+        HttpUriRequest request = new HttpGet("http://localhost:8083/api/alquileres/filtrado-por-estado-activo");
 
         // Act
         CloseableHttpResponse response = HttpClientBuilder.create().build().execute(request);
