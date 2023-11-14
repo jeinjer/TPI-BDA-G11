@@ -72,26 +72,11 @@ public class AlquilerController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }}
 
-    /*
-    @GetMapping("/{id}/{moneda}")
-    public ResponseEntity<Alquiler> finalizarAlquiler(@PathVariable Long id,
-                                                         @PathVariable(required = false) String moneda) {
-        try {
-            Alquiler alquiler = alquilerService.finalizarAlquiler(id, moneda);
-            if (alquiler != null) return ResponseEntity.ok(alquiler);
-            else return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        catch (NoSuchElementException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }}
-    */
     @PostMapping
-    public ResponseEntity<Alquiler> createAlquiler(@RequestBody Alquiler alquiler) {
+    public ResponseEntity<Alquiler> createAlquiler(@RequestParam Long estacionId) {
         try{
-            Alquiler createdAlquiler = alquilerService.save(alquiler);
-            if (createdAlquiler != null) return ResponseEntity.ok(createdAlquiler);
+            Alquiler alquiler = alquilerService.iniciarAlquiler(estacionId);
+            if (alquiler != null) return ResponseEntity.ok(alquiler);
             else return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

@@ -4,6 +4,7 @@ import tpi.g11.alquileres.models.Alquiler;
 import tpi.g11.alquileres.models.Tarifa;
 import tpi.g11.alquileres.repositorios.AlquilerRepository;
 import org.springframework.stereotype.Service;
+import tpi.g11.estaciones.models.Estacion;
 import tpi.g11.estaciones.services.EstacionServiceImpl;
 
 import java.time.Duration;
@@ -56,20 +57,22 @@ public class AlquilerServiceImpl implements AlquilerService{
         }
     }
 
-    /*
-    public void iniciarAlquiler(Long estacionId){
+
+    public Alquiler iniciarAlquiler(Long estacionId){
         try{
         Optional<Estacion> estacion = estacionService.findById(estacionId);
-        if (estacion.isEmpty()) {
+        if (estacion.isPresent()) {
             Alquiler alquiler = new Alquiler();
             alquiler.setEstacionRetiro(estacion.get());
+            alquiler.setEstado(1);
             save(alquiler);
+            return alquiler;
             }
         } catch (RuntimeException ex){
             throw new IllegalArgumentException("Error con la estación o el alquiler");
-        }
+        } return null;
     }
-    */
+
 
     public double calcularCosto(Alquiler alquiler, Tarifa tarifa){
         Duration duracion = Duration.between(alquiler.getFechaHoraRetiro(), alquiler.getFechaHoraDevolucion());
