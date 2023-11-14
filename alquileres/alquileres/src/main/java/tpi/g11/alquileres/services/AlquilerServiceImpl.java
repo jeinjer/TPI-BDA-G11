@@ -4,7 +4,6 @@ import tpi.g11.alquileres.models.Alquiler;
 import tpi.g11.alquileres.models.Tarifa;
 import tpi.g11.alquileres.repositorios.AlquilerRepository;
 import org.springframework.stereotype.Service;
-import tpi.g11.estaciones.models.Estacion;
 import tpi.g11.estaciones.services.EstacionServiceImpl;
 
 import java.time.Duration;
@@ -14,14 +13,10 @@ import java.util.Optional;
 
 @Service
 public class AlquilerServiceImpl implements AlquilerService{
-
     private final AlquilerRepository alquilerRepository;
     private final EstacionServiceImpl estacionService;
-
     private final TarifaServiceImpl tarifaService;
-
     private final MonedaService monedaService;
-
     public AlquilerServiceImpl(AlquilerRepository alquilerRepository, EstacionServiceImpl estacionService, TarifaServiceImpl tarifaService, MonedaService monedaService) {
         this.alquilerRepository = alquilerRepository;
         this.estacionService = estacionService;
@@ -60,10 +55,12 @@ public class AlquilerServiceImpl implements AlquilerService{
             return null;
         }
     }
+
+    /*
     public void iniciarAlquiler(Long estacionId){
         try{
         Optional<Estacion> estacion = estacionService.findById(estacionId);
-        if (estacion != null){
+        if (estacion.isEmpty()) {
             Alquiler alquiler = new Alquiler();
             alquiler.setEstacionRetiro(estacion.get());
             save(alquiler);
@@ -72,6 +69,7 @@ public class AlquilerServiceImpl implements AlquilerService{
             throw new IllegalArgumentException("Error con la estación o el alquiler");
         }
     }
+    */
 
     public double calcularCosto(Alquiler alquiler, Tarifa tarifa){
         Duration duracion = Duration.between(alquiler.getFechaHoraRetiro(), alquiler.getFechaHoraDevolucion());
@@ -101,7 +99,7 @@ public class AlquilerServiceImpl implements AlquilerService{
     }
 
     @Override
-    public Optional<Alquiler> finalizarAlquiler(Long alquilerId) {
+    public Optional<Alquiler> finalizarAlquiler(Long alquilerId, String moneda) {
         try {
             Optional<Alquiler> alquiler = this.findById(alquilerId);
             if (alquiler.isPresent()) {
@@ -110,11 +108,11 @@ public class AlquilerServiceImpl implements AlquilerService{
                     Alquiler alquilerFinalizado = alquiler.get();
                     alquilerFinalizado.setMonto(calcularCosto(alquilerFinalizado, tarifa.get()));
                     alquilerFinalizado.setEstado(2);
-                    /*
+
                     if (moneda != null) {
                         alquilerFinalizado.setMonto(monedaService.calcularConversion(moneda, alquilerFinalizado.getMonto()));
                     }
-                    */
+
                     return Optional.of(alquilerFinalizado);
                 }
             }

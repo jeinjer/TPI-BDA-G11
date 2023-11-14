@@ -35,9 +35,10 @@ public class AlquilerController {
     }}
 
     @GetMapping("/finalizar-alquiler/{id}")
-    public ResponseEntity<Optional<Alquiler>> finalizarAlquiler(@PathVariable Long id) {
+    public ResponseEntity<Optional<Alquiler>> finalizarAlquiler(@PathVariable Long id,
+                                                                @RequestParam String moneda) {
         try{
-            Optional<Alquiler> alquileres = alquilerService.finalizarAlquiler(id);
+            Optional<Alquiler> alquileres = alquilerService.finalizarAlquiler(id, moneda);
             if (alquileres != null) return ResponseEntity.ok(alquileres);
             else return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (IllegalArgumentException ex){

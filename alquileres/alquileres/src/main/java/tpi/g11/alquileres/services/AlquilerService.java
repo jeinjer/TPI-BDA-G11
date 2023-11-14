@@ -16,6 +16,7 @@ public interface AlquilerService {
     void deleteById(Long id);
 
     Alquiler update(Long id, Alquiler alquiler);
+
     /*
     // Metodo sin probar
     public void iniciarAlquiler(Long estacionId){
@@ -31,9 +32,10 @@ public interface AlquilerService {
         }
     }
     */
-    double calcularCosto(Alquiler alquilerDto, Tarifa tarifa);
 
-    Optional<Alquiler> finalizarAlquiler(Long alquilerId);
+    double calcularCosto(Alquiler alquiler, Tarifa tarifa);
+
+    Optional<Alquiler> finalizarAlquiler(Long alquilerId, String moneda);
 
     List<Alquiler> listadoFiltrado();
 }

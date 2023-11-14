@@ -25,16 +25,6 @@ public class Alquiler {
     @Column(name = "ESTADO")
     private int estado;
 
-    @JsonIgnore
-    @OneToOne
-    @JoinColumn(name = "ESTACION_RETIRO")
-    private Estacion estacionRetiro;
-
-    @JsonIgnore
-    @OneToOne
-    @JoinColumn(name = "ESTACION_DEVOLUCION")
-    private Estacion estacionDevolucion;
-
     @Column(name = "FECHA_HORA_DEVOLUCION")
     private LocalDateTime fechaHoraDevolucion;
 
@@ -43,8 +33,15 @@ public class Alquiler {
 
     @Column(name = "MONTO")
     private double monto;
+    
+    @OneToOne
+    @JoinColumn(name = "ESTACION_RETIRO")
+    private Estacion estacionRetiro;
 
-    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "ESTACION_DEVOLUCION")
+    private Estacion estacionDevolucion;
+
     @OneToOne
     @JoinColumn(name = "ID_TARIFA")
     private Tarifa tarifa;
