@@ -17,21 +17,7 @@ public interface AlquilerService {
 
     Alquiler update(Long id, Alquiler alquiler);
 
-    /*
-    // Metodo sin probar
-    public void iniciarAlquiler(Long estacionId){
-        try{
-        EstacionDTO estacionDto = estacionService.findById(estacionId);
-        if (estacionDto != null){
-            AlquilerDTO alquilerDto = new AlquilerDTO();
-            alquilerDto.setEstacionRetiro(estacionDto);  // Estacion pasada como argumento
-            save(alquilerDto);  // Finalmente la guardamos
-            }
-        } catch (RuntimeException ex){
-            throw new IllegalArgumentException("Error con la estación o el alquiler");
-        }
-    }
-    */
+    Alquiler iniciarAlquiler(Long estacionId);
 
     double calcularCosto(Alquiler alquiler, Tarifa tarifa);
 
