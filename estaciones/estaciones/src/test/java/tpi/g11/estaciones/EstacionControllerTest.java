@@ -1,5 +1,12 @@
 package tpi.g11.estaciones;
 
+import org.apache.http.client.methods.HttpPost;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
 import tpi.g11.estaciones.models.Estacion;
 import tpi.g11.estaciones.services.EstacionServiceImpl;
 
@@ -21,10 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EstacionControllerTest {
     private EstacionServiceImpl estacionService;
+    private RestTemplate restTemplate;
 
     @BeforeEach
     void setup(){
         estacionService = Mockito.mock(EstacionServiceImpl.class);
+        restTemplate = new RestTemplate();
     }
 
     @Test
@@ -35,7 +44,7 @@ public class EstacionControllerTest {
         Mockito.when(estacionService.findAll())
                 .thenReturn(estaciones);
 
-        HttpUriRequest request = new HttpGet("http://localhost:8080/api/estaciones/" + 1);
+        HttpUriRequest request = new HttpGet("http://localhost:8084/api/estaciones/" + 1);
 
         // Act
         CloseableHttpResponse response = HttpClientBuilder.create().build().execute(request);
@@ -50,7 +59,7 @@ public class EstacionControllerTest {
         Mockito.when(estacionService.findAll())
                 .thenThrow(NoSuchElementException.class);
 
-        HttpUriRequest request = new HttpGet("http://localhost:8080/api/estaciones/");
+        HttpUriRequest request = new HttpGet("http://localhost:8084/api/estaciones/");
 
         // Act
         CloseableHttpResponse response = HttpClientBuilder.create().build().execute(request);
@@ -69,7 +78,7 @@ public class EstacionControllerTest {
         Mockito.when(estacionService.estacionMasCercana(latitud, longitud))
                 .thenReturn(estacion);
 
-        HttpUriRequest request = new HttpGet("http://localhost:8080/api/estaciones/" + latitud + "/" + longitud);
+        HttpUriRequest request = new HttpGet("http://localhost:8084/api/estaciones/" + latitud + "/" + longitud);
 
         // Act
         CloseableHttpResponse response = HttpClientBuilder.create().build().execute(request);
@@ -78,4 +87,5 @@ public class EstacionControllerTest {
         assertEquals(200, response.getStatusLine().getStatusCode());
     }
 
-}
+    }
+

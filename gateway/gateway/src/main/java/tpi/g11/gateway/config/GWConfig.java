@@ -34,10 +34,6 @@ public class GWConfig {
     @Bean
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
         http.authorizeExchange(exchanges -> exchanges
-
-                        .pathMatchers("/api/alquileres/filtrado-por-estado-activo")
-                        .hasRole("ADMINISTRADOR")
-
                         .pathMatchers("/api/estaciones/**")
                         .hasRole("ADMINISTRADOR")
 
@@ -47,7 +43,7 @@ public class GWConfig {
                         .pathMatchers("/api/alquileres/iniciar-alquiler")
                         .hasRole("CLIENTE")
 
-                        .pathMatchers("/api/alquileres/finalizar-alquiler")
+                        .pathMatchers("/api/alquileres/finalizar-alquiler/**")
                         .hasRole("CLIENTE")
 
                         // Cualquier otra petición...
